@@ -1,0 +1,1218 @@
+# Sesión 02 - Machine Learning y Deep Learning
+
+> **Documento convertido a texto para uso en GitHub / GitHub Copilot.**
+> 
+> Fuente: PDF de SENATI, curso **Machine Learning y Deep Learning**, carrera **Inteligencia Artificial IV Semestre**.  
+> Instructor: **Mg. Arturo Huapaya H.**  
+> Este archivo conserva el contenido textual de las diapositivas y añade descripciones de tablas, diagramas e imágenes para que un asistente basado en texto pueda comprender también la información visual del PDF.
+
+---
+
+## 1. Objetivo general del curso
+
+Al finalizar el módulo formativo, el aprendiz tendrá una comprensión sólida y práctica de los fundamentos esenciales del **Machine Learning** y **Deep Learning**, así como las habilidades necesarias para aplicar estos conceptos en la resolución de problemas del mundo real mediante el lenguaje **Python**.
+
+---
+
+# SESIÓN 02
+
+## 2. Objetivo de la sesión
+
+Al finalizar la sesión, el aprendiz será capaz de:
+
+- Describir los tipos de algoritmos de **aprendizaje no supervisado**.
+- Diferenciar los algoritmos de **clasificación** y **agrupamiento**.
+- Implementar el algoritmo **K-Means con Python**.
+- Interpretar los grupos obtenidos a partir de los datos analizados.
+
+---
+
+## 3. Temas de la sesión
+
+1. Tipos de algoritmos de aprendizaje no supervisado.
+2. Diferencias entre algoritmos de clasificación y agrupamiento.
+3. Implementación del algoritmo K-Means con Python.
+4. Definición de red neuronal artificial y su importancia en IA.
+5. Estructura de una red neuronal artificial.
+6. Tipos de redes neuronales artificiales.
+7. Creación de una red neuronal con TensorFlow y Keras.
+
+---
+
+# TRANSCRIPCIÓN Y DESCRIPCIÓN DETALLADA POR PÁGINA
+
+## Página 1 - Portada
+
+**Carrera:** Inteligencia Artificial IV Semestre  
+**Curso:** Machine Learning y Deep Learning  
+**Instructor:** Mg. Arturo Huapaya H.  
+**Institución:** SENATI - Escuela de Tecnologías de la Información.
+
+**Descripción visual:**
+La portada muestra una fotografía de una persona utilizando una laptop, acompañada por gráficos de conexiones digitales y el logotipo de SENATI. El diseño presenta el nombre de la carrera, el curso y el instructor.
+
+---
+
+## Página 2 - Objetivo del curso
+
+**Texto:**
+
+Al finalizar el módulo formativo, el aprendiz tendrá una comprensión sólida y práctica de los fundamentos esenciales del Machine Learning y Deep Learning, así como las habilidades necesarias para aplicar estos conceptos en la resolución de problemas del mundo real mediante el lenguaje Python.
+
+**Descripción visual:**
+A la izquierda aparece una diana u objetivo con una flecha apuntando al centro. Alrededor hay iconos relacionados con documentos, personas, aprendizaje y trabajo. La imagen refuerza la idea de cumplir objetivos formativos.
+
+---
+
+## Página 3 - Sesión 02
+
+Diapositiva de separación que marca el inicio de la **Sesión 02**.
+
+**Descripción visual:**
+Fondo tecnológico azul con una mano tocando una interfaz digital y un icono central relacionado con personas o usuarios.
+
+---
+
+## Página 4 - Objetivo de la sesión
+
+**Texto:**
+
+Al finalizar la sesión, el aprendiz será capaz de describir los tipos de algoritmos de aprendizaje no supervisado, diferenciar los algoritmos de clasificación y agrupamiento, e implementar el algoritmo K-Means con Python, interpretando los grupos obtenidos a partir de los datos analizados.
+
+**Interpretación para contexto del proyecto:**
+La sesión se enfoca principalmente en **clustering**, en especial K-Means, y luego introduce conceptos de redes neuronales y Deep Learning.
+
+---
+
+## Página 5 - Temas
+
+- Describe los tipos de algoritmos de aprendizaje no supervisado.
+- Define las diferencias entre algoritmos de clasificación y agrupamiento.
+- Implementa algoritmo K-Means con Python.
+- Define la red neuronal artificial y su importancia en la IA.
+- Describe la estructura de una red neuronal artificial.
+- Identifica los tipos de redes neuronales artificiales.
+- Crea una red neuronal con TensorFlow y Keras.
+
+---
+
+## Página 6 - Charla de 5 minutos: Actos inseguros
+
+**Título:** Charla de 5 minutos  
+**Tema:** Actos inseguros.
+
+**Descripción visual:**
+La diapositiva muestra una escena de oficina o aula con varias personas sentadas alrededor de una mesa, libros, una laptop y objetos de escritorio. Es una sección de seguridad incluida antes del contenido técnico.
+
+---
+
+## Página 7 - Imagen de seguridad
+
+La diapositiva no contiene texto explicativo adicional.
+
+**Descripción visual:**
+Se observa una ilustración en 3D de una persona junto a una máquina industrial verde identificada como **WXR 200**. La máquina tiene controles visibles y la escena parece corresponder a un material audiovisual o ejemplo sobre seguridad y actos inseguros.
+
+---
+
+## Página 8 - Nociones previas
+
+Diapositiva de separación con el título **Nociones previas**.
+
+**Descripción visual:**
+Fondo azul tecnológico con una interfaz digital y un icono de personas.
+
+---
+
+## Página 9 - Caso: Logística Inteligente Express
+
+### Situación planteada
+
+- Una empresa de entrega de paquetes a domicilio tiene las coordenadas geográficas **(X, Y)** de **1000 clientes** en una ciudad, pero no sabe cómo organizar sus rutas.
+- El gerente de operaciones quiere dividir la ciudad en **3 zonas de reparto eficientes** para asignar un camión a cada una.
+- El historial contiene las ubicaciones de los clientes, pero **ningún registro tiene una etiqueta que indique a qué zona pertenece**.
+
+### Idea central
+
+Los datos contienen posiciones geográficas, pero no existe una variable objetivo o etiqueta que diga a qué grupo pertenece cada cliente. Este caso prepara la explicación de **aprendizaje no supervisado** y **clustering**.
+
+---
+
+## Página 10 - Caso: tabla de clientes y pregunta de algoritmo
+
+### Tabla mostrada
+
+| Cliente | Coordenada X (Latitud) | Coordenada Y (Longitud) | ¿Zona asignada? |
+|---|---:|---:|---|
+| C001 | -12.046 | -77.031 | ? (Desconocido) |
+| C002 | -12.082 | -77.012 | ? (Desconocido) |
+| C003 | -12.011 | -77.054 | ? (Desconocido) |
+
+### Preguntas de la diapositiva
+
+- ¿Qué tipo de **ALGORITMO** debemos utilizar en este caso: **Regresión o Clasificación**?
+- ¿Podemos usar la librería de **Scikit-Learn** en este caso?
+
+### Conexión con las diapositivas siguientes
+
+Aunque aquí se plantea la comparación "Regresión o Clasificación", el desarrollo posterior presenta una tercera categoría relevante: **Agrupamiento (Clustering) no supervisado**, porque las zonas no están previamente etiquetadas.
+
+---
+
+## Página 11 - Aprendizaje no supervisado
+
+### Definición
+
+El aprendizaje no supervisado es una rama del Machine Learning en la que los algoritmos analizan y procesan **datos que no tienen etiquetas ni respuestas predefinidas**.
+
+A diferencia del aprendizaje supervisado, donde el algoritmo sabe lo que busca, este modelo analiza la información bruta para descubrir:
+
+- Patrones.
+- Estructuras internas.
+- Relaciones ocultas.
+
+Todo esto se descubre automáticamente a partir de los datos.
+
+### Relación con el caso logístico
+
+La tabla de clientes vuelve a mostrarse con la columna **¿Zona asignada?** marcada como desconocida.
+
+El material resalta dos ideas:
+
+- **No hay etiquetas.**
+- **No hay respuestas previas para cada observación.**
+
+Esto justifica el uso de aprendizaje no supervisado.
+
+---
+
+## Página 12 - Clasificación vs. Agrupamiento (Clustering)
+
+### Clasificación - Aprendizaje supervisado
+
+El modelo aprende de **etiquetas del pasado** para predecir el grupo de un dato nuevo.
+
+**Ejemplo del PDF:**
+
+- "Fraude"
+- "No Fraude"
+
+Es decir, las categorías ya existen y el modelo aprende a asignar nuevos datos a una de ellas.
+
+### Agrupamiento - Aprendizaje no supervisado
+
+El modelo **no tiene etiquetas**.
+
+Su trabajo es:
+
+- Descubrir patrones ocultos.
+- Agrupar los datos según su similitud.
+- Utilizar la cercanía o distancia geométrica como criterio de agrupamiento.
+
+---
+
+## Página 13 - Desarrollo
+
+Diapositiva de separación que da inicio a la sección de **Desarrollo**.
+
+---
+
+## Página 14 - Aprendizaje no supervisado
+
+### Definición ampliada
+
+El aprendizaje no supervisado es una técnica de inteligencia artificial y aprendizaje automático donde el modelo analiza datos que **no tienen etiquetas ni resultados predefinidos**.
+
+Su objetivo principal es explorar la información para descubrir:
+
+- Patrones.
+- Estructuras ocultas.
+- Relaciones entre los datos.
+
+### Descripción del diagrama
+
+El gráfico de la diapositiva tiene dos etapas:
+
+1. **Datos no etiquetados:**
+   - Se muestran varios puntos grises dispersos.
+   - No existe separación ni categoría conocida.
+
+2. **Salida clusterizada:**
+   - Los puntos aparecen organizados en varios grupos.
+   - Los grupos se diferencian visualmente por colores: azul, naranja, amarillo y rojo.
+   - Cada grupo queda encerrado en una zona delimitada.
+
+**Concepto visual:** un algoritmo no supervisado recibe puntos sin etiquetas y produce una estructura de grupos a partir de similitudes internas.
+
+---
+
+## Página 15 - Agrupamiento (Clustering)
+
+### Definición
+
+El agrupamiento divide los datos en grupos o **clústeres** que comparten características similares de forma natural.
+
+Su objetivo es la **segmentación**:
+
+- Junta los elementos que se parecen entre sí.
+- Separa los elementos que son diferentes.
+
+### Algoritmos comunes
+
+#### 1. K-Means - Particionamiento
+
+Divide los datos en un número fijo de **K clústeres** definidos previamente.
+
+Busca centros llamados **centroides** para agrupar puntos, especialmente cuando los grupos pueden representarse aproximadamente como agrupaciones compactas o esféricas.
+
+#### 2. Clustering Jerárquico
+
+Construye una **jerarquía de grupos**.
+
+Suele visualizarse mediante un **dendrograma**.
+
+Puede operar fusionando o dividiendo datos en distintos niveles.
+
+#### 3. DBSCAN - Basado en densidad
+
+Agrupa puntos según la **densidad del espacio**.
+
+Ventajas mencionadas:
+
+- Puede detectar formas irregulares.
+- Puede marcar puntos aislados como **ruido**.
+
+#### 4. Modelos de Mezcla Gaussiana - GMM
+
+Asume que los datos provienen de una mezcla de varias **distribuciones gaussianas o normales**.
+
+### Ejemplo del PDF
+
+Segmentar a los clientes de un banco en **perfiles de gasto**, por ejemplo:
+
+- Viajeros.
+- Ahorradores.
+- Compradores compulsivos.
+
+El objetivo sería ofrecer productos personalizados a cada grupo.
+
+---
+
+## Página 16 - Reglas de asociación
+
+### Objetivo
+
+Descubrir relaciones ocultas en los datos.
+
+Busca patrones del tipo:
+
+> "Si ocurre A, es muy probable que ocurra B".
+
+### Algoritmos comunes
+
+#### 1. Apriori
+
+Utiliza un enfoque descrito como **"fuerza bruta inteligente"**.
+
+Parte de la idea de que si un conjunto de elementos es frecuente, entonces todos sus subconjuntos también deben ser frecuentes.
+
+#### 2. FP-Growth - Frequent Pattern Growth
+
+Es presentado como una evolución y alternativa eficiente a Apriori.
+
+Características:
+
+- No genera combinaciones candidatas una por una.
+- Comprime la base de datos en una estructura de árbol llamada **FP-Tree**.
+- Solo necesita escanear la base de datos dos veces.
+- Esto lo hace más rápido en grandes volúmenes de datos.
+
+#### 3. ECLAT - Equivalence Class Transformation
+
+A diferencia de Apriori y FP-Growth, que buscan de manera horizontal registro por registro, **ECLAT realiza una búsqueda vertical**.
+
+Se enfoca en los **IDs de las transacciones** donde aparece cada producto.
+
+Acelera el cálculo mediante operaciones de **intersección de conjuntos**.
+
+### Ejemplo del PDF
+
+Detectar que quienes compran **pañales los viernes por la tarde** también suelen comprar **cerveza**.
+
+---
+
+## Página 17 - Reducción de dimensionalidad
+
+### Objetivo
+
+La reducción de dimensionalidad busca la **simplificación**.
+
+Cuando un conjunto de datos tiene cientos de columnas o variables, el proceso lo "comprime" a un conjunto menor de variables importantes para que:
+
+- Los modelos visuales sean más manejables.
+- Los cálculos sean más rápidos.
+- El procesamiento sea más eficiente.
+- Se conserve la esencia principal de la información.
+
+### Algoritmos comunes
+
+### A. Métodos lineales
+
+#### PCA - Análisis de Componentes Principales
+
+Transforma las variables originales en un nuevo conjunto de variables **incorrelacionadas** llamadas **componentes principales**.
+
+Los componentes se ordenan de mayor a menor según la cantidad de información o **varianza** retenida.
+
+#### LDA - Análisis Discriminante Lineal
+
+A diferencia de PCA, presentado como puramente no supervisado, LDA se usa a menudo de forma supervisada.
+
+Reduce dimensiones buscando **maximizar la separación entre clases o categorías ya conocidas**.
+
+### B. Métodos no lineales - Manifold Learning
+
+#### t-SNE - t-Distributed Stochastic Neighbor Embedding
+
+- Mapea datos de cientos de dimensiones a solo **2 o 3 dimensiones**.
+- Busca mantener elementos similares cerca y elementos diferentes lejos.
+- Es útil para visualizar agrupamientos.
+- Según el material, no se recomienda para entrenar otros modelos porque puede deformar las distancias globales.
+
+#### UMAP - Uniform Manifold Approximation and Projection
+
+Se presenta como una alternativa moderna a t-SNE.
+
+Ventajas destacadas:
+
+- Es más rápido.
+- Maneja mejor conjuntos de datos muy grandes.
+- Preserva mejor la estructura global de los datos.
+
+### Ejemplo del PDF
+
+Comprimir los miles de píxeles de una imagen de reconocimiento facial a unos pocos **rasgos clave** o componentes principales.
+
+---
+
+## Página 18 - Algoritmo K-Means
+
+### Definición
+
+K-Means es uno de los algoritmos de aprendizaje no supervisado más populares y utilizados.
+
+Su objetivo principal es **particionar un conjunto de datos en K grupos o clústeres distintos**.
+
+Cada dato pertenece al grupo cuyo **centroide** está más cerca.
+
+### Descripción del diagrama
+
+El gráfico muestra dos paneles:
+
+1. **Unlabelled Data / Datos sin etiquetar**
+   - Se ven varios grupos naturales de puntos grises, pero no tienen categorías.
+
+2. **Labelled Data / Datos agrupados**
+   - Después de aplicar K-Means aparecen tres grupos diferenciados por color.
+   - Cada grupo tiene un símbolo **X** que representa su **centroide**.
+
+El flujo visual indica que K-Means toma datos sin etiquetas y genera agrupaciones basadas en la distancia a los centroides.
+
+---
+
+## Página 19 - ¿Cómo funciona el algoritmo K-Means?
+
+El proceso se explica en cuatro pasos.
+
+### 1. Elegir K
+
+Se define cuántos grupos se desean encontrar.
+
+Ejemplo conceptual: si se necesitan 3 zonas de reparto, entonces **K = 3**.
+
+### 2. Asignación
+
+El algoritmo coloca **K puntos iniciales**, llamados **centroides**, de forma aleatoria.
+
+Luego agrupa cada dato con el centroide más cercano.
+
+La cercanía suele medirse utilizando **distancia euclidiana**.
+
+### 3. Actualización
+
+Para cada grupo se calcula el centro real de los puntos asignados.
+
+Después, el centroide se mueve a esa nueva posición.
+
+### 4. Repetición
+
+El proceso de asignación y actualización se repite hasta que los centroides ya no se mueven.
+
+### Distancia euclidiana
+
+La distancia euclidiana es la longitud del segmento de recta que une a dos puntos en un espacio geométrico.
+
+Representa la distancia más corta y directa entre ellos.
+
+---
+
+## Página 20 - Funcionamiento visual de K-Means
+
+### Descripción detallada del diagrama
+
+La diapositiva representa gráficamente el proceso de K-Means.
+
+#### Etapa 1 - Elegir K centroides
+
+- Se muestra una nube de puntos grises.
+- Dentro de la nube se seleccionan varios centroides iniciales.
+- En el ejemplo visual se utilizan tres centroides, identificados con colores diferentes.
+
+#### Etapa 2 - Primera asignación
+
+- Cada punto se colorea según el centroide más cercano.
+- Se forman tres grupos provisionales.
+
+#### Etapa 3 - Reubicación de centroides
+
+- Los centroides se mueven hacia el centro de los puntos que les fueron asignados.
+- Si un punto queda más cerca de otro centroide después del movimiento, puede cambiar de grupo.
+
+#### Etapa 4 - Regiones finales / Polígonos de Voronoi
+
+El material indica:
+
+> En el algoritmo de K-Means, los polígonos de Voronoi representan las regiones de decisión finales creadas tras agrupar los datos.
+
+Visualmente, el plano queda dividido en regiones separadas por líneas. Cada región corresponde al centroide más cercano.
+
+---
+
+## Página 21 - K-Means: casos de uso comunes
+
+### Segmentación de clientes
+
+Agrupar compradores según:
+
+- Hábitos de compra.
+- Ticket promedio.
+
+Uso: campañas de marketing.
+
+### Sistemas de recomendación
+
+Encontrar grupos de usuarios con gustos parecidos para sugerir:
+
+- Productos.
+- Contenido.
+
+### Detección de anomalías y fraudes
+
+Identificar transacciones o comportamientos que no encajan en ningún clúster considerado normal.
+
+### Organización de información
+
+Agrupar elementos con patrones similares, por ejemplo:
+
+- Noticias.
+- Documentos.
+- Genes.
+
+---
+
+## Página 22 - Implementación de K-Means
+
+La diapositiva no contiene código directamente dentro del PDF. Proporciona un enlace de Google Colab para la implementación práctica.
+
+**Enlace incluido en la diapositiva:**
+
+https://colab.research.google.com/drive/1_S-pdLdqB30T1ZZEZRr0M7XBa3-l6z--?usp=sharing
+
+**Nota para GitHub/Copilot:**
+El PDF solo referencia el notebook externo; el código fuente de dicho notebook no está incluido en este documento PDF.
+
+---
+
+# INTRODUCCIÓN A REDES NEURONALES - DEEP LEARNING
+
+## Página 23 - Introducción a Redes Neuronales
+
+Diapositiva de separación con el título:
+
+**Introducción a Redes Neuronales (Deep Learning)**
+
+---
+
+## Página 24 - ¿Qué es una Red Neuronal Artificial (ANN)?
+
+### Definición
+
+Una Red Neuronal Artificial o **ANN (Artificial Neural Network)** es un modelo computacional inspirado en la estructura biológica del cerebro humano.
+
+Está compuesta por unidades de procesamiento llamadas **neuronas matemáticas** interconectadas entre sí.
+
+### Estructura estándar
+
+#### 1. Capa de Entrada - Input Layer
+
+Recibe las características numéricas crudas.
+
+**Ejemplo del PDF:** píxeles de una cámara.
+
+#### 2. Capas Ocultas - Hidden Layers
+
+Extraen patrones abstractos mediante:
+
+- Multiplicación de los datos por **pesos (weights)**.
+- Aplicación de **funciones de activación**, por ejemplo **ReLU**.
+
+#### 3. Capa de Salida - Output Layer
+
+Entrega la decisión probabilística final.
+
+Para clasificación, puede utilizar funciones de activación como **Softmax**.
+
+---
+
+## Página 25 - Hiperparámetros en la Red Neuronal Artificial
+
+### Definición
+
+Los **hiperparámetros** son variables de configuración externa que se definen manualmente **antes de iniciar el entrenamiento**.
+
+Controlan cómo aprende el modelo.
+
+### Diferencia entre hiperparámetros y parámetros
+
+#### Hiperparámetros
+
+- Se fijan antes del entrenamiento.
+- Son definidos por el programador o científico de datos.
+- Configuran la forma en que el modelo aprende.
+
+#### Parámetros del modelo
+
+Ejemplos:
+
+- Pesos.
+- Sesgos.
+
+Estos parámetros son aprendidos y ajustados automáticamente por la red a partir de los datos durante el entrenamiento.
+
+### Descripción del gráfico
+
+La diapositiva compara dos procesos:
+
+- **Hyperparameters tuning → Hyperparameters**: engranajes verdes representan la configuración externa del modelo.
+- **Model training → Model Parameters**: engranajes rojos representan el entrenamiento que produce o ajusta los parámetros internos.
+
+El objetivo visual es separar claramente lo que configura el humano de lo que aprende automáticamente la red.
+
+---
+
+## Página 26 - Tipos de hiperparámetros
+
+### A. Hiperparámetros de arquitectura
+
+Definen la estructura física y capacidad de la red.
+
+- Número de capas ocultas.
+- Número de neuronas por capa.
+- Tipos de funciones de activación, por ejemplo:
+  - ReLU.
+  - Sigmoide.
+
+### B. Hiperparámetros de entrenamiento
+
+Controlan cómo avanza la optimización de la red.
+
+#### Tasa de aprendizaje - Learning Rate
+
+Define qué tan grandes son los pasos que da el optimizador al corregir los errores.
+
+#### Tamaño del lote - Batch Size
+
+Cantidad de muestras que se procesan antes de actualizar los pesos de la red.
+
+#### Épocas - Epochs
+
+Cantidad de veces que el conjunto completo de datos de entrenamiento pasa a través de la red.
+
+### C. Hiperparámetros de regularización
+
+Sirven para evitar que la red memorice los datos en exceso, es decir, evitar **sobreajuste u overfitting**.
+
+Ejemplos:
+
+- **Dropout:** desconexión aleatoria de neuronas durante el entrenamiento.
+- Penalizaciones como regularización **L1** o **L2**.
+
+---
+
+## Página 27 - ¿Qué es una época en una red neuronal artificial?
+
+### Definición
+
+Una **época (epoch)** es un ciclo completo de entrenamiento en el que la red neuronal procesa la totalidad del conjunto de datos de entrenamiento una vez.
+
+### Una pasada completa
+
+Durante una época, cada muestra de los datos de entrenamiento pasa por la red para que esta ajuste sus parámetros internos:
+
+- Pesos.
+- Sesgos.
+
+### Lotes e iteraciones
+
+Como el conjunto de datos puede ser muy grande, se divide en partes más pequeñas llamadas **lotes (batches)**.
+
+El número de lotes necesarios para completar una época depende del tamaño de cada lote.
+
+### Múltiples épocas
+
+Una sola pasada rara vez es suficiente para aprender patrones complejos.
+
+Por ello, el entrenamiento utiliza múltiples épocas para reducir gradualmente el error de predicción.
+
+### Iteración - Iteration
+
+Una iteración es el paso en el que la red procesa **un solo lote de datos**.
+
+Una época contiene varias iteraciones.
+
+---
+
+## Página 28 - ¿Qué es una función de activación?
+
+### Definición
+
+En una red neuronal, una función de activación es una ecuación matemática que se aplica a la salida de cada neurona para determinar si debe "activarse" o transmitir información.
+
+En términos sencillos, funciona como un **interruptor matemático** que decide:
+
+- Si una neurona debe transmitir información.
+- Con qué intensidad debe hacerlo.
+
+### ¿Cómo actúa en la red neuronal?
+
+Su objetivo principal es introducir **no linealidad** en el modelo.
+
+Sin una función de activación, una red neuronal sería solo una gran combinación de:
+
+- Sumas.
+- Multiplicaciones lineales.
+
+Aunque tuviera muchas capas, se comportaría de forma equivalente a un modelo lineal simple y tendría dificultades para aprender patrones complejos como:
+
+- Imágenes.
+- Texto.
+- Audio.
+
+---
+
+## Página 29 - Proceso interno de una neurona
+
+### Texto principal
+
+Cada neurona de la red, sin importar en qué capa se encuentre, repite de forma similar estos pasos:
+
+1. Recibe entradas.
+2. Multiplica las entradas por pesos matemáticos.
+3. Suma los resultados.
+4. Añade un sesgo.
+5. Pasa el resultado por una función de activación.
+6. Produce una salida.
+
+### Descripción del diagrama
+
+El gráfico representa una neurona matemática.
+
+Elementos visibles:
+
+- **Entradas:** varios valores de entrada, por ejemplo x₁, x₂, xₙ.
+- **Pesos:** cada entrada se conecta con la neurona mediante un peso.
+- **Bias / Sesgo:** se añade un término adicional.
+- **Suma ponderada:** se muestra una operación equivalente a una suma del tipo Σ(wᵢxᵢ) más el sesgo.
+- **Función de activación f(z):** transforma la suma ponderada.
+- **Salida:** resultado final de la neurona.
+
+### Representación matemática conceptual derivada del diagrama
+
+```text
+z = (w1*x1 + w2*x2 + ... + wn*xn) + b
+salida = f(z)
+```
+
+Donde:
+
+- `x` = entradas.
+- `w` = pesos.
+- `b` = sesgo o bias.
+- `f` = función de activación.
+
+Esta fórmula expresa en texto lo que aparece gráficamente en la diapositiva.
+
+---
+
+## Página 30 - Ejemplo visual de red neuronal profunda
+
+La diapositiva contiene principalmente un diagrama, sin texto explicativo adicional en español.
+
+### Descripción visual detallada
+
+El gráfico muestra una red neuronal que aprende una frontera de decisión compleja.
+
+#### Entrada / Features
+
+A la izquierda aparecen características de entrada derivadas de dos variables principales. Entre las etiquetas visibles se encuentran expresiones similares a:
+
+- `x1`
+- `x2`
+- `x1²`
+- `x2²`
+- `x1*x2`
+- `sin(x1)`
+- `sin(x2)`
+
+Estas características alimentan la red.
+
+#### Capas ocultas
+
+El gráfico indica **4 hidden layers**.
+
+Se observan varias columnas de neuronas interconectadas. Algunas columnas están etiquetadas aproximadamente con cantidades como:
+
+- 7 neuronas.
+- 5 neuronas.
+- 4 neuronas.
+- 3 neuronas.
+
+Cada neurona muestra pequeñas áreas de colores que representan cómo responde a distintas regiones del espacio de entrada.
+
+#### Salida
+
+A la derecha se observa una gráfica bidimensional con regiones de dos clases.
+
+Las regiones forman una frontera no lineal parecida a cuatro cuadrantes alternados.
+
+También se muestra una curva de pérdida que desciende durante el entrenamiento.
+
+**Idea visual principal:**
+Las capas ocultas transforman progresivamente las características de entrada hasta producir una separación compleja entre clases en la salida.
+
+---
+
+## Página 31 - Funciones de activación en capas ocultas y capa de salida
+
+### 1. Capas ocultas - Procesamiento interno
+
+**Función utilizada:** ReLU.
+
+**Objetivo:**
+Introducir no linealidad para que el modelo pueda aprender formas complejas, por ejemplo curvas y bordes de números capturados por una cámara.
+
+### 2. Capa de salida - Decisión final
+
+**Función utilizada:** Softmax.
+
+**Objetivo:**
+Tomar las señales de las capas anteriores y transformarlas en un **vector de probabilidades**.
+
+Las probabilidades pueden interpretarse como porcentajes que suman 100 %, permitiendo conocer con qué nivel de confianza el modelo identificó cada número o clase.
+
+---
+
+## Página 32 - Cuándo usar ReLU y cuándo cambiarla: Escenario A
+
+### Escenario A: Clasificación estándar de imágenes
+
+**Ejemplo:** detector de números por cámara.
+
+### Decisión
+
+Usar **ReLU**.
+
+### Razón presentada en el material
+
+ReLU se describe como una opción estándar y muy rápida de calcular.
+
+Su operación básica convierte los valores negativos en cero.
+
+El material relaciona esta eficiencia con el procesamiento de píxeles en tiempo real y menciona que puede facilitar que el video de una cámara web funcione de manera fluida, por ejemplo a 30 cuadros por segundo.
+
+### Enlace de Google Colab incluido
+
+https://colab.research.google.com/drive/18clsBrMpRowFqfd6flh6MGyFHQ1AuyqI?usp=sharing
+
+---
+
+## Página 33 - Cuándo usar ReLU y cuándo cambiarla: Escenario B
+
+### Escenario B: "El cerebro se congela" - Neurona muerta / Die-Hard ReLU
+
+### Problema planteado
+
+Se está entrenando una red neuronal profunda para reconocer rostros.
+
+A partir de la época 4:
+
+- La precisión se estanca.
+- El error deja de bajar.
+- Al revisar el modelo se descubre que aproximadamente el **70 % de las neuronas ocultas** producen 0 de forma permanente.
+- Esto ocurre porque reciben señales negativas recurrentes.
+
+El material indica que estas neuronas han "muerto".
+
+### Decisión
+
+Cambiar ReLU por:
+
+- **Leaky ReLU**, o
+- **ELU**.
+
+### Razón
+
+Con una configuración similar a:
+
+```python
+layers.LeakyReLU(alpha=0.01)
+```
+
+los valores negativos no se destruyen completamente convirtiéndose en cero.
+
+En su lugar, se conserva una pequeña pendiente decimal.
+
+Según el material, esto permite que las neuronas sigan actualizando sus pesos y que el modelo continúe aprendiendo, por ejemplo, texturas complejas de la piel.
+
+---
+
+## Página 34 - ReLU: enlace complementario
+
+La diapositiva contiene principalmente un enlace de Google Colab.
+
+**Enlace incluido:**
+
+https://colab.research.google.com/drive/1Mqwfo2Zh53zVANo73I0OPCrJXdXHqYsR?usp=sharing
+
+No aparece código adicional directamente en el PDF.
+
+---
+
+## Página 35 - Cuándo usar ReLU y cuándo cambiarla: Escenario C
+
+### Escenario C: Procesamiento de Lenguaje Natural
+
+### Decisión
+
+Cambiar ReLU por **GELU**.
+
+### Razón presentada en el material
+
+ReLU corta los números de forma muy brusca en el cero absoluto.
+
+El lenguaje humano requiere transiciones matemáticas más suaves y probabilísticas.
+
+El PDF describe este comportamiento como **estocástico**.
+
+GELU se presenta como una función moderna utilizada en arquitecturas **Transformers** y relacionada con el procesamiento del contexto y la semántica de los textos.
+
+### Definición de comportamiento estocástico
+
+Un proceso estocástico contiene un elemento de:
+
+- Aleatoriedad.
+- Azar.
+- Probabilidad.
+
+Es lo opuesto a algo **determinista**, donde una misma entrada produce exactamente el mismo resultado matemático fijo.
+
+---
+
+## Página 36 - Cierre
+
+Texto principal:
+
+**¡¡GRACIAS!!**
+
+---
+
+## Página 37 - Logotipo SENATI
+
+La última página muestra únicamente el logotipo de **SENATI** sobre un fondo azul.
+
+---
+
+# BASE DE CONOCIMIENTO RESUMIDA PARA GITHUB / COPILOT
+
+Esta sección organiza las ideas principales del PDF de una manera más fácil de consultar durante un proyecto de programación.
+
+## 1. Aprendizaje no supervisado
+
+Se utiliza cuando los datos **no tienen etiquetas ni respuestas previamente definidas**.
+
+Objetivo general:
+
+```text
+Datos sin etiqueta
+        ↓
+Analizar patrones internos
+        ↓
+Descubrir estructura, relaciones o grupos
+```
+
+Tipos mencionados en la sesión:
+
+- Agrupamiento / Clustering.
+- Reglas de asociación.
+- Reducción de dimensionalidad.
+
+---
+
+## 2. Clasificación vs. Clustering
+
+### Clasificación
+
+```text
+Tipo: Supervisado
+Entrada: Datos + etiquetas conocidas
+Objetivo: Predecir una clase conocida
+Ejemplo: Fraude / No fraude
+```
+
+### Clustering
+
+```text
+Tipo: No supervisado
+Entrada: Datos sin etiquetas
+Objetivo: Descubrir grupos naturales
+Criterio frecuente: Similitud / distancia
+```
+
+Para el caso de las coordenadas de clientes sin zona conocida, la sesión conduce al uso de **clustering**.
+
+---
+
+## 3. K-Means
+
+### Propósito
+
+Separar los datos en `K` grupos.
+
+### Conceptos
+
+- `K`: cantidad de clústeres.
+- `centroide`: centro representativo de un clúster.
+- `distancia euclidiana`: medida utilizada para determinar qué centroide está más cerca de un punto.
+- `iteración`: repetición del proceso de asignar y recalcular centroides.
+
+### Flujo
+
+```text
+1. Elegir K
+2. Inicializar K centroides
+3. Asignar cada punto al centroide más cercano
+4. Recalcular el centroide de cada grupo
+5. Repetir 3 y 4
+6. Finalizar cuando los centroides dejan de cambiar
+```
+
+### Aplicaciones mencionadas
+
+- Segmentación de clientes.
+- Sistemas de recomendación.
+- Detección de anomalías y fraudes.
+- Organización de documentos o información.
+
+---
+
+## 4. Otros algoritmos no supervisados mencionados
+
+### Clustering
+
+```text
+K-Means
+Clustering jerárquico
+DBSCAN
+GMM
+```
+
+### Reglas de asociación
+
+```text
+Apriori
+FP-Growth
+ECLAT
+```
+
+### Reducción de dimensionalidad
+
+```text
+PCA
+LDA
+`t-SNE`
+UMAP
+```
+
+---
+
+## 5. Red neuronal artificial - ANN
+
+### Flujo estructural
+
+```text
+Capa de entrada
+      ↓
+Capas ocultas
+      ↓
+Capa de salida
+```
+
+### Funcionamiento básico de una neurona
+
+```text
+Entradas
+  ↓
+Multiplicación por pesos
+  ↓
+Suma ponderada
+  ↓
++ Sesgo
+  ↓
+Función de activación
+  ↓
+Salida
+```
+
+Representación conceptual:
+
+```text
+z = Σ(wi * xi) + b
+output = f(z)
+```
+
+---
+
+## 6. Parámetros vs. hiperparámetros
+
+### Parámetros aprendidos automáticamente
+
+```text
+Pesos
+Sesgos
+```
+
+### Hiperparámetros configurados externamente
+
+#### Arquitectura
+
+```text
+Número de capas ocultas
+Número de neuronas por capa
+Función de activación
+```
+
+#### Entrenamiento
+
+```text
+Learning rate
+Batch size
+Epochs
+```
+
+#### Regularización
+
+```text
+Dropout
+L1
+L2
+```
+
+---
+
+## 7. Época, batch e iteración
+
+```text
+Dataset completo
+   ├── Batch 1 → Iteración 1
+   ├── Batch 2 → Iteración 2
+   ├── Batch 3 → Iteración 3
+   └── ...
+
+Procesar todos los batches una vez = 1 Epoch
+```
+
+---
+
+## 8. Funciones de activación
+
+### ReLU
+
+Uso destacado en el PDF:
+
+- Capas ocultas.
+- Clasificación de imágenes.
+- Introducir no linealidad.
+- Cálculo rápido.
+
+### Leaky ReLU / ELU
+
+Uso planteado:
+
+- Cuando aparecen neuronas que producen 0 de forma permanente.
+- Permiten conservar una pequeña respuesta para valores negativos.
+
+### Softmax
+
+Uso:
+
+- Capa de salida en clasificación.
+- Convierte señales en un vector de probabilidades.
+
+### GELU
+
+Uso planteado:
+
+- Procesamiento de Lenguaje Natural.
+- Arquitecturas Transformers.
+
+---
+
+# POSIBLE CONTEXTO PARA UN PROYECTO BASADO EN ESTA SESIÓN
+
+Si GitHub Copilot utiliza este archivo como contexto, las decisiones técnicas que sí están respaldadas por el PDF son:
+
+1. Si los datos no tienen etiquetas y se requiere descubrir grupos, considerar **aprendizaje no supervisado**.
+2. Si se conoce previamente cuántos grupos se desean y los datos pueden separarse por cercanía, utilizar **K-Means**.
+3. K-Means necesita elegir un valor `K` y trabaja mediante centroides y distancia.
+4. Para redes neuronales, separar correctamente:
+   - Entrada.
+   - Capas ocultas.
+   - Salida.
+5. En capas ocultas, el material utiliza **ReLU** como función principal.
+6. En clasificación, el material utiliza **Softmax** como ejemplo de función de salida.
+7. Los hiperparámetros deben ser definidos antes del entrenamiento.
+8. `epochs`, `batch size` y `learning rate` son hiperparámetros de entrenamiento.
+9. `dropout`, `L1` y `L2` son mecanismos de regularización mencionados para evitar sobreajuste.
+10. El código práctico de K-Means y algunos ejemplos de redes neuronales están referenciados mediante enlaces de Google Colab, pero **no aparecen embebidos en el PDF**.
+
+---
+
+# ENLACES ORIGINALES INCLUIDOS EN EL PDF
+
+## K-Means
+
+https://colab.research.google.com/drive/1_S-pdLdqB30T1ZZEZRr0M7XBa3-l6z--?usp=sharing
+
+## ReLU / clasificación de imágenes
+
+https://colab.research.google.com/drive/18clsBrMpRowFqfd6flh6MGyFHQ1AuyqI?usp=sharing
+
+## Ejemplo complementario ReLU
+
+https://colab.research.google.com/drive/1Mqwfo2Zh53zVANo73I0OPCrJXdXHqYsR?usp=sharing
+
+---
+
+# NOTA DE FIDELIDAD AL PDF
+
+Este documento fue preparado para transformar el contenido del PDF a un formato principalmente textual. Las descripciones de gráficos y diagramas explican visualmente lo que aparece en las diapositivas, pero no sustituyen los notebooks externos enlazados por el profesor. Cuando el PDF no incluye código, este archivo no inventa una implementación que no estuviera presente en el material.
