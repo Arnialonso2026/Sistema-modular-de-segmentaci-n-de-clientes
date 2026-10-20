@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { BarChart3, ChevronDown, Gauge, LayoutDashboard, Lightbulb, Orbit, Users } from 'lucide-react'
+import { BarChart3, ChevronDown, Gauge, LayoutDashboard, Lightbulb, Orbit, ScanSearch, Users } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import Customers from '../modules/customers/Customers'
 import Dashboard from '../modules/dashboard/Dashboard'
@@ -10,6 +10,7 @@ import { runSegmentation } from '../services/segmentationService'
 import type { AppView, Customer, SegmentationSummary } from '../types'
 
 const ModelEvaluation = lazy(() => import('../modules/evaluation/ModelEvaluation'))
+const SegmentExplorer = lazy(() => import('../modules/segment-explorer/SegmentExplorer'))
 
 const SUMMARY_KEY = 'nova-segmentation-v1'
 
@@ -32,6 +33,7 @@ const navigation: { heading: string; items: NavigationItem[] }[] = [
   { heading: 'INTELIGENCIA', items: [
     { id: 'segmentation', label: 'Segmentación', icon: Orbit },
     { id: 'evaluation', label: 'Evaluación del modelo', icon: Gauge },
+    { id: 'segment-explorer', label: 'Explorador de segmentos', icon: ScanSearch },
     { id: 'recommendations', label: 'Recomendaciones', icon: Lightbulb },
   ] },
 ]
@@ -41,6 +43,7 @@ const pageTitles: Record<AppView, string> = {
   customers: 'Clientes',
   segmentation: 'Segmentación',
   evaluation: 'Evaluación del modelo',
+  'segment-explorer': 'Explorador de segmentos',
   recommendations: 'Recomendaciones',
 }
 
@@ -70,7 +73,13 @@ export default function App() {
   }
 
   function changeCustomers(next: Customer[]) {
-    setCustomers(next.map((customer) => ({ ...customer, segmento: undefined })))
+    setCustomers(next.map((customer) => ({
+      ...customer,
+      segmento: undefined,
+      distanceToCentroid: undefined,
+      distancePercentile: undefined,
+      potentialOutlier: undefined,
+    })))
     setSummary(null)
     localStorage.removeItem(SUMMARY_KEY)
   }
@@ -96,6 +105,7 @@ export default function App() {
     if (view === 'customers') return <Customers customers={customers} onChange={changeCustomers} onNotice={announce} />
     if (view === 'segmentation') return <Segmentation customers={customers} summary={summary} k={k} running={running} onKChange={setK} onRun={analyze} />
     if (view === 'evaluation') return <Suspense fallback={<section className="panel evaluation-empty"><span className="spinner spinner-dark" /><p>Cargando evaluación del modelo…</p></section>}><ModelEvaluation customers={customers} /></Suspense>
+    if (view === 'segment-explorer') return <Suspense fallback={<section className="panel evaluation-empty"><span className="spinner spinner-dark" /><p>Cargando explorador…</p></section>}><SegmentExplorer customers={customers} summary={summary} onRunSegmentation={() => setView('segmentation')} onRecommendations={() => setView('recommendations')} /></Suspense>
     if (view === 'recommendations') return <Recommendations summary={summary} onAnalyze={() => setView('segmentation')} />
     return <Dashboard customers={customers} summary={summary} onNavigate={setView} />
   }

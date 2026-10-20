@@ -10,7 +10,8 @@ Aplicación para Comercial Nova: permite mantener una base de clientes, descubri
 | 2. Datos y K-Means | Datos de ejemplo, validación, persistencia y servicio de clustering | Completa |
 | 3. Aplicación inicial | Panel, clientes, segmentación y recomendaciones | Completa |
 | 4. Evaluación del modelo | Silhouette, método del codo, comparación de K y recomendación | Completa |
-| 5. Pruebas y documentación | Pruebas automatizadas, compilación y guía de uso | Completa |
+| 5. Exploración e interpretación | PCA, perfiles, comparación y distancias por segmento | Completa |
+| 6. Pruebas y documentación | Pruebas automatizadas, compilación y guía de uso | Completa |
 
 ## Requisitos y ejecución
 
@@ -92,11 +93,48 @@ Con hasta 600 clientes válidos, Silhouette se calcula con todos los registros. 
 
 La recomendación estadística requiere al menos dos K evaluables. Con tres clientes solo se evalúa K=2; se muestra su métrica, pero no se recomienda entre alternativas. Si hay menos de tres clientes válidos, no se puede evaluar Silhouette.
 
+### Fase 5: Explorar e interpretar segmentos
+
+Después de ejecutar **Segmentación**, abre **Explorador de segmentos**. Esta pantalla utiliza las asignaciones, centroides y datos PCA conservados por esa misma ejecución. Si se cambia algún cliente, el resumen y los datos derivados se invalidan y hay que volver a ejecutar K-Means. Los análisis guardados antes de esta fase no contienen PCA; el explorador pide recalcularlos en vez de fabricar coordenadas.
+
+#### PCA 2D para visualización
+
+PCA recibe la misma matriz estandarizada que recibió K-Means. Calcula la matriz de covarianza, obtiene sus vectores propios con Jacobi y proyecta clientes y centroides sobre los dos componentes con mayor varianza:
+
+```text
+PCj = (x estandarizado - media) · vector propio j
+Varianza explicada PCj = autovalor j / suma de autovalores · 100
+```
+
+Los ejes del scatter muestran el porcentaje explicado. El PCA solo reduce dimensiones para visualizar: el algoritmo, las asignaciones y las distancias siguen calculándose en las variables estandarizadas originales. En datos constantes o sin varianza útil la pantalla lo indica, no sugiere una separación visual inexistente.
+
+#### Perfiles y diferencias
+
+Para cada grupo se calcula la media original de gasto, visitas y antigüedad, su cantidad de clientes, el promedio global y la diferencia relativa:
+
+```text
+Diferencia porcentual = (media del grupo / media global - 1) · 100
+```
+
+Si la media global vale cero, la diferencia no aplica. Los niveles alto/medio/bajo usan bandas orientativas de 15% por encima/debajo de la media; los nombres de perfil son resúmenes estadísticos, no etiquetas individuales. La tabla permite ordenar por perfil, tamaño, medias o diferencias.
+
+#### Distancias y posibles atípicos
+
+La distancia de cada cliente se obtiene de la misma solución K-Means:
+
+```text
+distancia(i) = sqrt(Σⱼ (xᵢⱼ estandarizado - centroideⱼ del grupo)²)
+```
+
+El percentil se calcula frente a las distancias de clientes del mismo grupo. Un registro se presenta como **Posible comportamiento atípico** cuando está en la cola superior al percentil 95 y el segmento tiene al menos cinco clientes. En grupos más pequeños se muestra que la muestra no basta para aplicar ese umbral. Es una señal para revisar, no una conclusión de fraude ni una anomalía real.
+
+El detalle de segmento incluye su perfil, porcentaje de la base procesada, medias/centroide en unidades originales, diferencias, distancias, dispersión cuadrática y clientes del grupo. Se puede abrir el detalle de un cliente desde la lista de atípicos o desde los puntos del gráfico, y saltar a recomendaciones comerciales.
+
 Los datos se guardan en el navegador, por lo que no se comparten entre dispositivos. La capa de cálculo está separada y puede sustituirse por una API Python más adelante; esta entrega calcula K-Means localmente en TypeScript y no incluye backend.
 
-### Fase 5: Verificar y entregar
+### Fase 6: Verificar y entregar
 
-La suite automatizada cubre reglas de clientes, asignación de grupos, reproducibilidad, Silhouette, codo, rango de K y exclusión de datos inválidos. Para repetir la verificación:
+La suite automatizada cubre reglas de clientes, asignación de grupos, reproducibilidad, Silhouette, codo, rango de K, PCA, varianza explicada, perfiles, diferencias, distancias y umbrales de atípicos. Para repetir la verificación:
 
 ```bash
 npm test
@@ -114,11 +152,23 @@ src/
 	modules/customers/Customers.tsx     # CRUD y búsqueda
 	modules/segmentation/Segmentation.tsx # Ejecución y resultados
 	modules/evaluation/ModelEvaluation.tsx # Comparación y calidad estadística
+	modules/segment-explorer/             # PCA, perfiles, detalle y atípicos
+		SegmentExplorer.tsx
+		SegmentDetail.tsx
+		components/
+			PcaScatterChart.tsx
+			SegmentComparisonTable.tsx
+			SegmentProfileCard.tsx
+			PotentialOutliers.tsx
+			CustomerDetailDialog.tsx
 	modules/recommendations/Recommendations.tsx
 	services/customerService.ts         # Validación y persistencia
 	services/clusteringCore.ts          # Núcleo K-Means y distancias compartidas
 	services/segmentationService.ts     # Servicio compatible para segmentación manual
 	services/modelEvaluationService.ts  # Inercia, Silhouette y estimación del codo
+	services/pcaService.ts              # Proyección PCA y varianza explicada
+	services/segmentProfileService.ts   # Diferencias y nombres interpretativos
+	services/outlierService.ts          # Percentiles de distancias intragrupo
 	types/evaluation.ts                 # Contratos de la evaluación
 	types/index.ts                      # Modelos compartidos
 ```
@@ -137,6 +187,11 @@ src/
 | 8 | Ejecutar K = 3 con los datos iniciales | Se muestran tres grupos y sus promedios |
 | 9 | Elegir K mayor que los registros válidos | No se ejecuta y se explica el requisito |
 | 10 | Cambiar clientes después de segmentar | Se limpian las etiquetas antiguas y se solicita recalcular |
+| 11 | Ejecutar K-Means y abrir Explorador de segmentos | Aparecen puntos coloreados, centroides y porcentajes PCA |
+| 12 | Seleccionar otra fila de comparación | Cambia el detalle y resalta el perfil correspondiente |
+| 13 | Ordenar por diferencia de gasto, visitas o antigüedad | Los segmentos se reordenan por la métrica seleccionada |
+| 14 | Abrir un cliente marcado como posible atípico | Se muestra su distancia, percentil y ficha individual |
+| 15 | Editar un cliente después de segmentar | Se limpian las asignaciones, distancias y resumen previo |
 
 ## Conceptos para interpretar los resultados
 
@@ -144,6 +199,9 @@ src/
 - K-Means forma grupos por proximidad; no predice categorías conocidas como lo haría un clasificador supervisado.
 - Las etiquetas `Grupo 1`, `Grupo 2`, etc. son identificadores técnicos. La interpretación se hace después observando cantidad y promedios.
 - K cambia el nivel de detalle: un K menor produce grupos más amplios; uno mayor divide más la base y puede dificultar la interpretación.
+- **Segmentación** ejecuta K-Means; **Evaluación del modelo** compara K estadísticamente; **Explorador de segmentos** ayuda a interpretar una ejecución ya realizada.
+- PCA es una proyección 2D con pérdida de información; la distancia visual entre puntos no sustituye la distancia al centroide original.
+- Las posibles observaciones atípicas se basan en distancia relativa dentro del grupo y no son etiquetas de fraude.
 - La tarjeta de calidad clasifica Silhouette en rangos visuales orientativos: bajo 0,25 débil; 0,25–0,50 limitado; 0,50–0,70 razonable; sobre 0,70 marcado. No son garantías de calidad para todos los dominios.
 - El análisis usa solo tres variables de compra. No representa todas las preferencias, contexto ni comportamiento de cada cliente.
 

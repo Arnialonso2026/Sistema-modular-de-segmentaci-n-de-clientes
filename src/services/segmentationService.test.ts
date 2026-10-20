@@ -12,6 +12,10 @@ describe('runSegmentation', () => {
     expect(result.customers.every((customer) => Number.isInteger(customer.segmento))).toBe(true)
     expect(result.summary.cantidadProcesada).toBe(sampleCustomers.length)
     expect(result.summary.inertia).toBeGreaterThanOrEqual(0)
+    expect(result.summary.grupos.every((group) => group.standardizedCentroid.length === 3)).toBe(true)
+    expect(result.summary.grupos.every((group) => Number.isFinite(group.centroid.gastoAcumulado))).toBe(true)
+    expect(result.customers.every((customer) => Number.isFinite(customer.distanceToCentroid))).toBe(true)
+    expect(result.customers.every((customer) => Number.isFinite(customer.distancePercentile))).toBe(true)
   })
 
   it('produce asignaciones reproducibles', () => {
