@@ -23,6 +23,6 @@ export interface SegmentationSummary {
   inertia: number
 }
 
-export type AppView = 'dashboard' | 'customers' | 'segmentation' | 'recommendations'
+export type AppView = 'dashboard' | 'customers' | 'segmentation' | 'evaluation' | 'recommendations'
 
 export type CustomerInput = Omit<Customer, 'segmento'>

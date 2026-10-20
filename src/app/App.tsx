@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { BarChart3, ChevronDown, LayoutDashboard, Lightbulb, Orbit, Users } from 'lucide-react'
+import { lazy, Suspense, useEffect, useState } from 'react'
+import { BarChart3, ChevronDown, Gauge, LayoutDashboard, Lightbulb, Orbit, Users } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import Customers from '../modules/customers/Customers'
 import Dashboard from '../modules/dashboard/Dashboard'
@@ -8,6 +8,8 @@ import Segmentation from '../modules/segmentation/Segmentation'
 import { getCustomers, saveCustomers } from '../services/customerService'
 import { runSegmentation } from '../services/segmentationService'
 import type { AppView, Customer, SegmentationSummary } from '../types'
+
+const ModelEvaluation = lazy(() => import('../modules/evaluation/ModelEvaluation'))
 
 const SUMMARY_KEY = 'nova-segmentation-v1'
 
@@ -29,6 +31,7 @@ const navigation: { heading: string; items: NavigationItem[] }[] = [
   ] },
   { heading: 'INTELIGENCIA', items: [
     { id: 'segmentation', label: 'Segmentación', icon: Orbit },
+    { id: 'evaluation', label: 'Evaluación del modelo', icon: Gauge },
     { id: 'recommendations', label: 'Recomendaciones', icon: Lightbulb },
   ] },
 ]
@@ -37,6 +40,7 @@ const pageTitles: Record<AppView, string> = {
   dashboard: 'Panel principal',
   customers: 'Clientes',
   segmentation: 'Segmentación',
+  evaluation: 'Evaluación del modelo',
   recommendations: 'Recomendaciones',
 }
 
@@ -91,6 +95,7 @@ export default function App() {
   function renderPage() {
     if (view === 'customers') return <Customers customers={customers} onChange={changeCustomers} onNotice={announce} />
     if (view === 'segmentation') return <Segmentation customers={customers} summary={summary} k={k} running={running} onKChange={setK} onRun={analyze} />
+    if (view === 'evaluation') return <Suspense fallback={<section className="panel evaluation-empty"><span className="spinner spinner-dark" /><p>Cargando evaluación del modelo…</p></section>}><ModelEvaluation customers={customers} /></Suspense>
     if (view === 'recommendations') return <Recommendations summary={summary} onAnalyze={() => setView('segmentation')} />
     return <Dashboard customers={customers} summary={summary} onNavigate={setView} />
   }
