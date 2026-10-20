@@ -235,6 +235,9 @@ tbody tr:hover { background: #fbfcfa; }
 .recommendation-metrics span { display: grid; gap: 4px; }
 .recommendation-metrics small { color: #909b95; font-size: 9px; }
 .recommendation-metrics strong { color: #45564d; font-size: 12px; }
+.recommendation-signal { padding: 10px 0 2px; }
+.recommendation-signal > span { color: #849089; font-size: 8px; font-weight: 700; letter-spacing: .6px; }
+.recommendation-signal p { margin: 5px 0 0; color: #68756d; font-size: 10px; line-height: 1.55; }
 .commercial-recommendation { min-height: 66px; padding: 11px 0 3px; }
 .commercial-recommendation > span, .suggestion-copy > div > span { color: #849089; font-size: 8px; font-weight: 700; letter-spacing: .6px; }
 .commercial-recommendation p { margin: 5px 0 0; color: #53635a; font-size: 10px; line-height: 1.55; }

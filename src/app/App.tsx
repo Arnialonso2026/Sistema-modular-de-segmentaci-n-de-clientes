@@ -89,7 +89,7 @@ export default function App() {
     setNotice(null)
     await new Promise((resolve) => window.setTimeout(resolve, 100))
     try {
-      const result = runSegmentation(customers, k)
+      const result = await runSegmentation(customers, k)
       setCustomers(result.customers)
       setSummary(result.summary)
       localStorage.setItem(SUMMARY_KEY, JSON.stringify(result.summary))

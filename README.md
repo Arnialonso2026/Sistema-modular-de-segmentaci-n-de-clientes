@@ -1,6 +1,6 @@
 # Nova | Sistema modular de segmentación de clientes
 
-Aplicación para Comercial Nova: permite mantener una base de clientes, descubrir grupos mediante K-Means y explorar ideas comerciales a partir de sus promedios. La interfaz está hecha con React + TypeScript; los datos se guardan en el navegador.
+Aplicación para Comercial Nova: permite mantener una base de clientes, descubrir grupos mediante K-Means y explorar ideas comerciales a partir de sus promedios. La interfaz está hecha con React + TypeScript y la segmentación se ejecuta obligatoriamente en una API Python con FastAPI y scikit-learn. Los datos se guardan en el navegador.
 
 ## Avance del proyecto
 
@@ -16,6 +16,18 @@ Aplicación para Comercial Nova: permite mantener una base de clientes, descubri
 ## Requisitos y ejecución
 
 - Node.js 20 o posterior y npm.
+- Python 3.10 o posterior.
+
+Inicia el backend en una terminal:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r api/requirements.txt
+python -m uvicorn api.main:app --reload --port 8000
+```
+
+En otra terminal, inicia la interfaz:
 
 ```bash
 npm install
@@ -23,6 +35,7 @@ npm run dev
 ```
 
 Vite mostrará una URL local para abrir la aplicación. Los datos de clientes y el último resultado se conservan en `localStorage` de ese navegador.
+La interfaz reenvía las llamadas `/api` al backend. La documentación interactiva de la API está disponible en `http://127.0.0.1:8000/docs`.
 
 ## Comandos disponibles
 
@@ -31,6 +44,7 @@ npm run dev        # Inicia el servidor de desarrollo
 npm run typecheck  # Revisa tipos TypeScript
 npm test           # Ejecuta pruebas automatizadas
 npm run build      # Genera la aplicación para producción
+python -m unittest discover -s api/tests -v  # Pruebas del backend (con .venv activado)
 ```
 
 ## Guía fase por fase
@@ -45,16 +59,15 @@ Para estudiar esta fase, empieza por `src/main.tsx`, que monta React, y continú
 
 `src/data/sampleCustomers.ts` carga los 12 registros ficticios del enunciado. `src/services/customerService.ts` valida, crea, actualiza y guarda clientes. El código debe ser único; gasto, visitas y antigüedad deben ser finitos y no negativos.
 
-`src/services/segmentationService.ts` implementa el agrupamiento sin depender de la interfaz:
+`src/services/segmentationService.ts` valida el rango de K y envía los clientes válidos a `POST /api/segmentation/run`. El endpoint está implementado en `api/main.py`; valida la entrada con Pydantic y delega el cálculo en `api/segmentation.py`:
 
-1. Recibe gasto acumulado, visitas de los últimos seis meses y antigüedad.
-2. Excluye registros con variables inválidas y estandariza cada variable con su media y desviación estándar. Así evita que la escala monetaria domine las distancias.
-3. Inicializa K centroides con una estrategia K-Means++ y asigna cada punto al centroide más cercano.
-4. Recalcula los centroides como la media de sus puntos y repite hasta converger o llegar a 300 iteraciones.
-5. Prueba diez inicializaciones reproducibles y conserva la de menor inercia (suma de distancias cuadráticas dentro de los grupos).
-6. Devuelve la asignación y los promedios de cada grupo en las unidades originales.
+1. Recibe gasto acumulado, visitas de los últimos seis meses y antigüedad; el nombre e identificador no se usan como variables del modelo.
+2. Estandariza las tres variables con `StandardScaler` para que la escala monetaria no domine las distancias.
+3. Ejecuta `KMeans` de scikit-learn con diez semillas reproducibles y conserva el resultado con menor inercia.
+4. Devuelve asignaciones, centroides estandarizados, distancias y promedios en las unidades originales.
+5. La interfaz completa perfiles comerciales, PCA y umbrales de posibles valores atípicos con esos resultados.
 
-K se puede elegir entre 2 y 5. El nombre y el código solo identifican al cliente: no se usan para calcular similitudes.
+K se puede elegir entre 2 y 5. La API es un requisito para ejecutar la segmentación; si no está disponible, la interfaz informa el error y no calcula K-Means localmente.
 
 ### Fase 3: Explorar el sistema
 
@@ -130,16 +143,17 @@ El percentil se calcula frente a las distancias de clientes del mismo grupo. Un 
 
 El detalle de segmento incluye su perfil, porcentaje de la base procesada, medias/centroide en unidades originales, diferencias, distancias, dispersión cuadrática y clientes del grupo. Se puede abrir el detalle de un cliente desde la lista de atípicos o desde los puntos del gráfico, y saltar a recomendaciones comerciales.
 
-Los datos se guardan en el navegador, por lo que no se comparten entre dispositivos. La capa de cálculo está separada y puede sustituirse por una API Python más adelante; esta entrega calcula K-Means localmente en TypeScript y no incluye backend.
+Los datos de clientes se guardan en el navegador, por lo que no se comparten entre dispositivos. La segmentación principal se calcula en la API Python. La pantalla de evaluación compara configuraciones de K localmente con el núcleo TypeScript compartido; no sustituye el resultado de la API usado por la segmentación y el explorador.
 
 ### Fase 6: Verificar y entregar
 
-La suite automatizada cubre reglas de clientes, asignación de grupos, reproducibilidad, Silhouette, codo, rango de K, PCA, varianza explicada, perfiles, diferencias, distancias y umbrales de atípicos. Para repetir la verificación:
+Las pruebas del frontend cubren reglas de clientes, integración HTTP, Silhouette, codo, PCA, perfiles, distancias y recomendaciones personalizadas por grupo. Las pruebas Python cubren validación del contrato, asignaciones y reproducibilidad. Para repetir la verificación, activa primero el entorno virtual del backend y ejecuta:
 
 ```bash
 npm test
 npm run typecheck
 npm run build
+python -m unittest discover -s api/tests -v
 ```
 
 ## Estructura del código
@@ -163,14 +177,21 @@ src/
 			CustomerDetailDialog.tsx
 	modules/recommendations/Recommendations.tsx
 	services/customerService.ts         # Validación y persistencia
-	services/clusteringCore.ts          # Núcleo K-Means y distancias compartidas
-	services/segmentationService.ts     # Servicio compatible para segmentación manual
+	services/clusteringCore.ts          # Núcleo TypeScript para evaluación del modelo
+	services/segmentationService.ts     # Cliente HTTP y resultados derivados de la API
 	services/modelEvaluationService.ts  # Inercia, Silhouette y estimación del codo
 	services/pcaService.ts              # Proyección PCA y varianza explicada
 	services/segmentProfileService.ts   # Diferencias y nombres interpretativos
 	services/outlierService.ts          # Percentiles de distancias intragrupo
+	services/recommendationService.ts   # Acciones personalizadas por segmento
 	types/evaluation.ts                 # Contratos de la evaluación
 	types/index.ts                      # Modelos compartidos
+api/
+	main.py                             # Endpoints FastAPI y documentación OpenAPI
+	models.py                           # Validación y contratos de entrada/salida
+	segmentation.py                     # Estandarización y K-Means con scikit-learn
+	requirements.txt                    # Dependencias obligatorias del backend
+	tests/test_segmentation.py          # Pruebas del servicio Python
 ```
 
 ## Casos de prueba manuales
@@ -207,8 +228,8 @@ src/
 
 ## Decisiones y límites
 
-- Se seleccionó cálculo local en TypeScript para que la práctica funcione sin configurar otro servidor. `segmentationService` concentra la lógica para facilitar su reemplazo por una API con scikit-learn.
+- La segmentación principal requiere FastAPI y scikit-learn; Vite reenvía `/api` al backend local. La evaluación comparativa de K conserva un núcleo TypeScript separado.
 - Se usa Recharts en un chunk cargado al abrir **Evaluación del modelo**, para mantener más ligero el arranque del resto de la aplicación.
 - `localStorage` es apropiado para una práctica local, pero no para datos comerciales reales ni para colaboración entre usuarios.
 - Las recomendaciones son reglas sencillas basadas en valores relativos; deben probarse con resultados de campañas antes de tomar decisiones de negocio.
-- El proyecto no incluye importación CSV, autenticación, base de datos compartida ni API Python.
+- El proyecto no incluye importación CSV, autenticación ni base de datos compartida.
