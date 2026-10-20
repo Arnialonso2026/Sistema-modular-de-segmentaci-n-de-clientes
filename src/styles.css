@@ -231,6 +231,12 @@ tbody tr:hover { background: #fbfcfa; }
 .recommendation-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); gap: 13px; }
 .recommendation-card { padding: 17px; }
 .recommendation-card h3 { min-height: 42px; margin: 16px 0 14px; font: 700 15px 'Manrope', sans-serif; }
+.recommendation-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0 0 10px; }
+.recommendation-level { display: grid; gap: 3px; padding: 7px; border-radius: 5px; background: #f1f3f1; color: #53635a; }
+.recommendation-level small { color: #849089; font-size: 8px; }
+.recommendation-level strong { font-size: 10px; text-transform: capitalize; }
+.recommendation-level.level-alto { background: #eaf3e9; color: #356746; }
+.recommendation-level.level-bajo { background: #f7eee7; color: #9a593d; }
 .recommendation-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid #edf0ed; border-bottom: 1px solid #edf0ed; }
 .recommendation-metrics span { display: grid; gap: 4px; }
 .recommendation-metrics small { color: #909b95; font-size: 9px; }

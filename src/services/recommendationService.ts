@@ -9,7 +9,7 @@ export interface RecommendationAverages {
 type RecommendationGroup = Pick<
   SegmentGroup,
   'id' | 'cantidad' | 'gastoPromedio' | 'visitasPromedio' | 'antiguedadPromedio'
->
+> & Pick<SegmentGroup, 'attributes'>
 
 const money = new Intl.NumberFormat('es-PE', {
   style: 'currency',
@@ -33,9 +33,9 @@ export function buildGroupRecommendation(group: RecommendationGroup, averages: R
   const ageComparison = compareToAverage(group.antiguedadPromedio, averages.age)
   const signal = `${group.cantidad} clientes; gasto medio ${money.format(group.gastoPromedio)} (${spendComparison}), ${quantity.format(group.visitasPromedio)} visitas en 6 meses (${visitsComparison}) y ${quantity.format(group.antiguedadPromedio)} meses de antigüedad (${ageComparison}).`
 
-  const highSpend = group.gastoPromedio >= averages.spend * 1.2 && group.gastoPromedio > averages.spend
-  const frequent = group.visitasPromedio >= averages.visits * 1.2 && group.visitasPromedio > averages.visits
-  const established = group.antiguedadPromedio >= averages.age * 1.2 && group.antiguedadPromedio > averages.age
+  const highSpend = group.attributes.gastoAcumulado === 'alto'
+  const frequent = group.attributes.visitas6Meses === 'alto'
+  const established = group.attributes.antiguedadMeses === 'alto'
 
   if (highSpend && frequent) return {
     profile: 'Clientes de alto valor y actividad',

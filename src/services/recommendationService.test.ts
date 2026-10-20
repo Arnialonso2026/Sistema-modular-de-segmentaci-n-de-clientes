@@ -11,6 +11,7 @@ describe('buildGroupRecommendation', () => {
       gastoPromedio: 2400,
       visitasPromedio: 16,
       antiguedadPromedio: 30,
+      attributes: { gastoAcumulado: 'alto', visitas6Meses: 'alto', antiguedadMeses: 'alto' },
     }, averages)
     const established = buildGroupRecommendation({
       id: 1,
@@ -18,6 +19,7 @@ describe('buildGroupRecommendation', () => {
       gastoPromedio: 750,
       visitasPromedio: 3,
       antiguedadPromedio: 24,
+      attributes: { gastoAcumulado: 'bajo', visitas6Meses: 'bajo', antiguedadMeses: 'alto' },
     }, averages)
 
     expect(highValue.profile).toContain('alto valor')
@@ -37,10 +39,24 @@ describe('buildGroupRecommendation', () => {
       gastoPromedio: 800,
       visitasPromedio: 14,
       antiguedadPromedio: 9,
+      attributes: { gastoAcumulado: 'bajo', visitas6Meses: 'alto', antiguedadMeses: 'medio' },
     }, averages)
 
     expect(recommendation.profile).toContain('frecuentes')
     expect(recommendation.proposal.replace(/\u00a0/g, ' ')).toContain('S/ 880')
     expect(recommendation.signal).toContain('75% por encima del promedio')
+  })
+
+  it('usa las mismas bandas del perfil del segmento para elegir la recomendación', () => {
+    const recommendation = buildGroupRecommendation({
+      id: 0,
+      cantidad: 5,
+      gastoPromedio: 1150,
+      visitasPromedio: 9,
+      antiguedadPromedio: 12,
+      attributes: { gastoAcumulado: 'alto', visitas6Meses: 'medio', antiguedadMeses: 'medio' },
+    }, averages)
+
+    expect(recommendation.profile).toBe('Alto gasto con oportunidad de recompra')
   })
 })

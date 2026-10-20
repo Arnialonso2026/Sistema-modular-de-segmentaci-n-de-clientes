@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { BarChart3, ChevronDown, Gauge, LayoutDashboard, Lightbulb, Orbit, ScanSearch, Users } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import Customers from '../modules/customers/Customers'
@@ -65,6 +65,7 @@ export default function App() {
   const [k, setK] = useState(3)
   const [running, setRunning] = useState(false)
   const [notice, setNotice] = useState<Notice | null>(null)
+  const analysisRequestId = useRef(0)
 
   useEffect(() => saveCustomers(customers), [customers])
 
@@ -73,32 +74,44 @@ export default function App() {
   }
 
   function changeCustomers(next: Customer[]) {
-    setCustomers(next.map((customer) => ({
+    const shouldReanalyze = summary !== null || running
+    const updatedCustomers = next.map((customer) => ({
       ...customer,
       segmento: undefined,
       distanceToCentroid: undefined,
       distancePercentile: undefined,
       potentialOutlier: undefined,
-    })))
+    }))
+    analysisRequestId.current += 1
+    setCustomers(updatedCustomers)
     setSummary(null)
     localStorage.removeItem(SUMMARY_KEY)
+    setRunning(false)
+    if (shouldReanalyze) void analyzeCustomers(updatedCustomers, k)
   }
 
-  async function analyze() {
+  async function analyzeCustomers(targetCustomers: Customer[], targetK: number) {
+    const requestId = ++analysisRequestId.current
     setRunning(true)
     setNotice(null)
-    await new Promise((resolve) => window.setTimeout(resolve, 100))
     try {
-      const result = await runSegmentation(customers, k)
+      const result = await runSegmentation(targetCustomers, targetK)
+      if (requestId !== analysisRequestId.current) return
       setCustomers(result.customers)
       setSummary(result.summary)
       localStorage.setItem(SUMMARY_KEY, JSON.stringify(result.summary))
-      announce(`Segmentación completada: ${result.summary.cantidadProcesada} clientes en ${k} grupos.`)
+      announce(`Segmentación completada: ${result.summary.cantidadProcesada} clientes en ${targetK} grupos.`)
     } catch (error) {
-      announce(error instanceof Error ? error.message : 'No se pudo completar la segmentación.', 'error')
+      if (requestId === analysisRequestId.current) {
+        announce(error instanceof Error ? error.message : 'No se pudo completar la segmentación.', 'error')
+      }
     } finally {
-      setRunning(false)
+      if (requestId === analysisRequestId.current) setRunning(false)
     }
+  }
+
+  function analyze() {
+    void analyzeCustomers(customers, k)
   }
 
   function renderPage() {

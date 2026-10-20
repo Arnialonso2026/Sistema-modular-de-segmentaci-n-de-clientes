@@ -30,4 +30,18 @@ describe('segmentProfileService', () => {
     expect(profiled.differences.antiguedadMeses).toBeCloseTo(50)
     expect(profiled.id).toBe(1)
   })
+
+  it('distingue niveles altos, medios y bajos por variable', () => {
+    const groups = [
+      { ...baseGroup, id: 0, centroid: { gastoAcumulado: 1200, visitas6Meses: 10, antiguedadMeses: 8 } },
+      { ...baseGroup, id: 1, centroid: { gastoAcumulado: 1000, visitas6Meses: 10, antiguedadMeses: 10 } },
+      { ...baseGroup, id: 2, centroid: { gastoAcumulado: 800, visitas6Meses: 10, antiguedadMeses: 12 } },
+    ]
+
+    const profiled = profileSegments(groups, { gastoAcumulado: 1000, visitas6Meses: 10, antiguedadMeses: 10 })
+
+    expect(profiled[0].attributes).toEqual({ gastoAcumulado: 'alto', visitas6Meses: 'medio', antiguedadMeses: 'bajo' })
+    expect(profiled[1].attributes).toEqual({ gastoAcumulado: 'medio', visitas6Meses: 'medio', antiguedadMeses: 'medio' })
+    expect(profiled[2].attributes).toEqual({ gastoAcumulado: 'bajo', visitas6Meses: 'medio', antiguedadMeses: 'alto' })
+  })
 })

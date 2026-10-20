@@ -72,7 +72,7 @@ K se puede elegir entre 2 y 5. La API es un requisito para ejecutar la segmentac
 ### Fase 3: Explorar el sistema
 
 - **Panel principal:** total de clientes, gasto promedio, visitas promedio y estado del último análisis.
-- **Clientes:** alta, edición, búsqueda y eliminación con confirmación. Los cambios invalidan el análisis anterior para evitar mostrar segmentos desactualizados.
+- **Clientes:** alta, edición, búsqueda y eliminación con confirmación. Si existe un análisis, los cambios recalculan automáticamente los grupos con el mismo K; si el recálculo no es posible, se limpian las asignaciones antiguas.
 - **Segmentación:** selector manual K de 2 a 5, ejecución, fecha, promedios por grupo y tabla filtrable/ordenable.
 - **Recomendaciones:** cada grupo muestra una recomendación comercial y una propuesta de campaña orientativa.
 
@@ -108,7 +108,7 @@ La recomendación estadística requiere al menos dos K evaluables. Con tres clie
 
 ### Fase 5: Explorar e interpretar segmentos
 
-Después de ejecutar **Segmentación**, abre **Explorador de segmentos**. Esta pantalla utiliza las asignaciones, centroides y datos PCA conservados por esa misma ejecución. Si se cambia algún cliente, el resumen y los datos derivados se invalidan y hay que volver a ejecutar K-Means. Los análisis guardados antes de esta fase no contienen PCA; el explorador pide recalcularlos en vez de fabricar coordenadas.
+Después de ejecutar **Segmentación**, abre **Explorador de segmentos**. Esta pantalla utiliza las asignaciones, centroides y datos PCA conservados por esa misma ejecución. Si se cambia algún cliente, el resumen y los datos derivados se recalculan automáticamente con el mismo K. Los análisis guardados antes de esta fase no contienen PCA; el explorador pide recalcularlos en vez de fabricar coordenadas.
 
 #### PCA 2D para visualización
 
@@ -207,7 +207,7 @@ api/
 | 7 | Cancelar la confirmación de eliminación | El cliente permanece en la tabla |
 | 8 | Ejecutar K = 3 con los datos iniciales | Se muestran tres grupos y sus promedios |
 | 9 | Elegir K mayor que los registros válidos | No se ejecuta y se explica el requisito |
-| 10 | Cambiar clientes después de segmentar | Se limpian las etiquetas antiguas y se solicita recalcular |
+| 10 | Cambiar clientes después de segmentar | Se recalculan automáticamente las asignaciones, los perfiles y las recomendaciones |
 | 11 | Ejecutar K-Means y abrir Explorador de segmentos | Aparecen puntos coloreados, centroides y porcentajes PCA |
 | 12 | Seleccionar otra fila de comparación | Cambia el detalle y resalta el perfil correspondiente |
 | 13 | Ordenar por diferencia de gasto, visitas o antigüedad | Los segmentos se reordenan por la métrica seleccionada |

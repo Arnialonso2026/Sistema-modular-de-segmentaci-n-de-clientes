@@ -29,6 +29,11 @@ export default function Recommendations({ summary, onAnalyze }: RecommendationsP
           return <article className="panel recommendation-card" key={group.id}>
             <div className="recommendation-card-top"><span className={`segment-swatch group-color-${index % 5}`} /><span>GRUPO {group.id + 1}</span><small>{group.cantidad} clientes</small></div>
             <h3>{suggestion.profile}</h3>
+            <div className="recommendation-levels" aria-label="Clasificación del grupo">
+              <span className={`recommendation-level level-${group.attributes.gastoAcumulado}`}><small>Gasto</small><strong>{group.attributes.gastoAcumulado}</strong></span>
+              <span className={`recommendation-level level-${group.attributes.visitas6Meses}`}><small>Visitas</small><strong>{group.attributes.visitas6Meses}</strong></span>
+              <span className={`recommendation-level level-${group.attributes.antiguedadMeses}`}><small>Antigüedad</small><strong>{group.attributes.antiguedadMeses}</strong></span>
+            </div>
             <div className="recommendation-metrics"><span><small>Gasto medio</small><strong>{money.format(group.gastoPromedio)}</strong></span><span><small>Visitas medias</small><strong>{group.visitasPromedio.toFixed(1)}</strong></span></div>
             <div className="recommendation-signal"><span>SEÑAL DEL GRUPO</span><p>{suggestion.signal}</p></div>
             <div className="commercial-recommendation"><span>RECOMENDACIÓN COMERCIAL</span><p>{suggestion.recommendation}</p></div>
